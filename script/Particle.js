@@ -82,20 +82,17 @@ export class Particle {
         this.moveParticle();
     }
 
-    getGradient() {
-        const gradient = ctx.createRadialGradient(
-            this.x, this.y, 0,
-            this.x, this.y, this.size
-        )
-        gradient.addColorStop(0, this.color);
-        gradient.addColorStop(1, 'black')
-        return gradient;
-    }
-
     draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.getGradient();
-        ctx.fill();
+            // halo
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+    ctx.fillStyle = this.color + '22'; // very transparent
+    ctx.fill();
+
+    // core
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
     }
 }
