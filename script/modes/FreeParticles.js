@@ -12,7 +12,7 @@ import { Grid } from "../Grid.js";
 
 export class FreeParticles {
     constructor() {
-        this.panel = "infoPanel";
+        this.panel = "freeParticlesInfoPanel";
         this.grid = new Grid(CELLSIZE);
         this.particles = [];
         for (let i = 0; i < PARTICLE_POPULATION; i++) {

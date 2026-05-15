@@ -8,20 +8,25 @@
     <body>
         <div id ="leftPanel">
             <div id="modePanel">
-                Modes
+                <div class = title> Modes </div>
                 <button data-mode="freeParticles">Free Particles</button>
                 <button data-mode="particleLife">Particle Life</button>
                 <button data-mode="boids">Boids</button>
                 <button data-mode="reactionDiffusion">Reaction Diffusion</button>
                 <button data-mode="fourier">Fourier</button>
             </div>
-            <div id="infoPanel">
-                Info
+            <div id="freeParticlesInfoPanel">
+                <div class = title> Commands </div>
                 <p>Left click : attract</p>
                 <p>Right click : repulse</p>
             </div>
-            <div id="rulesPanel">
-                Rules
+            <div id="boidsInfoPanel">
+                <div class = title> Commands </div>
+                <p>Left click : create boids</p>
+            </div>
+            <div id="rulesPanelContainer">
+                <div class = title> Rules </div>
+                <div id="rulesPanel"></div>
             </div>
         </div>
             <canvas id="canvas"></canvas>

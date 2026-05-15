@@ -6,6 +6,7 @@ export const MIN_PARTICLE_SIZE = 4;
 export const MAX_PARTICLE_SIZE = 7;
 export const PARTICLE_POPULATION = 2000;
 export const MARGIN_SIZE = 5;
+export const BOID_POPULATION = 500;
 
 export const canvas = document.getElementById('canvas');
 export const ctx = canvas.getContext('2d');

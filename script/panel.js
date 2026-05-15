@@ -3,6 +3,14 @@ export function initPanel(setMode) {
     document.querySelectorAll('#modePanel button').forEach(btn => {
         btn.addEventListener('click', () => setMode(btn.dataset.mode));
     })
+    document.getElementById('rulesPanelContainer').addEventListener('click', (e) => {
+        if (e.target !== e.currentTarget) return;
+        if (document.getElementById('rulesPanel').style.display === 'flex') {
+            hidePanel('rulesPanel');
+        } else {
+            showPanel('rulesPanel');
+        }
+    });
 }
 
 export function showPanel(type) {

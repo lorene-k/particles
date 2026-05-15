@@ -1,6 +1,6 @@
 import {
     CELLSIZE,
-    PARTICLE_POPULATION,
+    BOID_POPULATION,
     MOUSE_MIN_DISTANCE,
     canvas,
     TYPES,
@@ -12,11 +12,12 @@ import { getRandomInt } from "../utils.js"
 
 export class Boids {
     constructor() {
+        this.panel = "boidsInfoPanel";
         this.grid = new Grid(CELLSIZE);
-        this.particles = [];
+        this.boids = [];
         let type = 0;
-        for (let i = 0; i < PARTICLE_POPULATION; i++) {
-            this.particles.push(new Particle(TYPES[1]))
+        for (let i = 0; i < BOID_POPULATION; i++) {
+            this.boids.push(new Particle(TYPES[1]))
         }
     }
 
@@ -42,8 +43,8 @@ export class Boids {
 
     update(mouseMode, ruleType = "STRONG") {
         this.grid.clear();
-        this.particles.forEach(p => this.grid.insert(p));
-        this.particles.forEach(p => {
+        this.boids.forEach(p => this.grid.insert(p));
+        this.boids.forEach(p => {
             this.applyRules(p, this.grid.getNeighbors(p), ruleType);
             p.moveParticle();
             p.draw();
@@ -51,11 +52,11 @@ export class Boids {
     }
 
     destroy() {
-        this.particles = [];
+        this.boids = [];
     }
 
     handleResize() {
-        this.particles.forEach(p => {
+        this.boids.forEach(p => {
             p.x = Math.min(p.x, canvas.width);
             p.y = Math.min(p.y, canvas.height);
         });
