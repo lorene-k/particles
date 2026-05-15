@@ -1,37 +1,31 @@
 body {
     margin: 0;
     padding: 0;
-    background: #070823;
     overflow: hidden;
+    background: rgba(11, 11, 17, 0.5);
     box-sizing: border-box;
 }
 
 canvas {
-    background: #070823;
+    cursor: none;
     display: block;
+    background: rgba(11, 11, 17, 0.5);
 }
 
-#panel {
+#leftPanel {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 8px;
     position: absolute;
     top: 16px;
     left: 16px;
-    padding: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    color: #fff;
-    font-family: Arial, sans-serif;
+    font-family: "Avenir", sans-serif;
 }
 
-#panel {
-    display: flex;
+#modePanel, #infoPanel, #rulesPanel {
+    display: none;
     flex-direction: column;
     gap: 4px;
-    position: absolute;
-    top: 16px;
-    left: 16px;
     padding: 12px;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(12px);
@@ -41,7 +35,11 @@ canvas {
     font-family: "Avenir", sans-serif;
 }
 
-#panel button {
+#modePanel, #infoPanel {
+    display: flex;
+}
+
+#modePanel button {
     padding: 7px 14px;
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -53,7 +51,36 @@ canvas {
     transition: all 0.2s;
 }
 
-#panel button:hover {
+#modePanel button:hover {
     background: rgba(255, 255, 255, 0.15);
     color: #fff;
+}
+
+#infoPanel p {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: left;
+    font-size: 13px;
+    margin: 0;
+}
+.rule-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.rule-row span:first-child {
+    width: 100px;
+}
+
+.rule-row input[type="range"] {
+    width: 100px;
+    accent-color: #c4c4c4;
+}
+
+.rule-row span:last-child {
+    width: 30px;
+    text-align: right;
+    opacity: 0.6;
 }

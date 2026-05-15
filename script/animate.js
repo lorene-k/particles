@@ -1,17 +1,22 @@
 
-import { canvas, ctx, mouse, CELLSIZE, PARTICLE_POPULATION } from "./constants.js";
-import { Particle } from "./Particle.js";
-import { Grid } from "./Grid.js";
+import { canvas, ctx, mouse } from "./constants.js";
+import { initPanel, showPanel, hidePanel, buildRulesPanel } from "./panel.js";
+import { FreeParticles } from "./modes/FreeParticles.js";
+import { ParticleLife } from "./modes/ParticleLife.js";
+import { Boids } from "./modes/Boids.js";
+// import { ReactionDiffusion } from "./modes/ReactionDiffusion.js";
+// import { Fourier } from "./modes/Fourier.js";
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let mouseMode = "neutral";
+let activeMode = new FreeParticles();
+export const MODE_MAP = {
+    freeParticles: () => new FreeParticles(),
+    particleLife: () => new ParticleLife(),
+    boids: () => new Boids()
+};
 
-const grid = new Grid(CELLSIZE);
-const particles = [];
-for (let i = 0; i < PARTICLE_POPULATION; i++) {
-    particles.push(new Particle())
-}
 
 window.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -36,25 +41,39 @@ window.addEventListener('mouseup', (e) => {
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
-    particles.forEach(p => {
-        p.x = Math.min(p.x, canvas.width);
-        p.y = Math.min(p.y, canvas.height);
-    });
+    if (activeMode.handleResize) activeMode.handleResize();
 })
+
+function drawCursor() {
+    ctx.beginPath();
+    ctx.arc(mouse.x, mouse.y, 12, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(mouse.x, mouse.y, 12, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgb(255, 255, 255)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+}
+
+function setMode(mode) {
+    hidePanel(activeMode.panel);
+    activeMode.destroy();
+    activeMode = MODE_MAP[mode]();
+    showPanel(activeMode.panel);
+}
 
 function animate() {
     ctx.fillStyle = 'rgba(11, 11, 17, 0.5)';
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-    grid.clear();
-    particles.forEach(p => grid.insert(p));
-    particles.forEach(p => {
-        p.update(mouseMode, grid.getNeighbors(p));
-        p.draw();
-    })
-
+    activeMode.update(mouseMode);
+    drawCursor();
     requestAnimationFrame(animate);
 }
 
+buildRulesPanel();
+
+initPanel(setMode);
 animate();
