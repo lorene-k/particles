@@ -4,21 +4,24 @@ import { initPanel, showPanel, hidePanel, buildRulesPanel } from "./panel.js";
 import { FreeParticles } from "./modes/FreeParticles.js";
 import { ParticleLife } from "./modes/ParticleLife.js";
 import { Boids } from "./modes/Boids.js";
-// import { ReactionDiffusion } from "./modes/ReactionDiffusion.js";
+import { ReactionDiffusion } from "./modes/ReactionDiffusion.js";
 // import { Fourier } from "./modes/Fourier.js";
 
+// ******************************************************************** GLOBALS
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let mouseMode = "neutral";
 let activeModeStr = "freeParticles";
 let activeMode = new FreeParticles();
-export const MODE_MAP = {
+
+const MODE_MAP = {
     freeParticles: () => new FreeParticles(),
     particleLife: () => new ParticleLife(),
-    boids: () => new Boids()
+    boids: () => new Boids(),
+    reactionDiffusion: () => new ReactionDiffusion()
 };
 
-
+// ************************************************************ EVENT LISTENERS
 window.addEventListener('contextmenu', (e) => e.preventDefault());
 
 window.addEventListener('mousemove', (e) => {
@@ -45,6 +48,11 @@ window.addEventListener('resize', () => {
     if (activeMode.handleResize) activeMode.handleResize();
 })
 
+document.getElementById('leftPanel').addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+});
+
+// *************************************************************** CURSOR STYLE
 function drawCursor() {
     ctx.beginPath();
     ctx.arc(mouse.x, mouse.y, CURSOR_RADIUS, 0, Math.PI * 2);
@@ -66,6 +74,7 @@ function drawCursor() {
     }
 }
 
+// *************************************************************** ANIMATE MODE
 function setMode(mode) {
     activeModeStr = mode;
     activeMode.panels.forEach(p => hidePanel(p));

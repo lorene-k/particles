@@ -82,6 +82,8 @@ function buildBoidsControlPanel(panel, title, activeMode) {
 
         const value = document.createElement('span');
         value.textContent = counts[type.name];
+        
+        activeMode.sliderRefs[type.name] = { slider, value };
 
         slider.addEventListener('input', () => {
             activeMode.syncCountByType(type.name, parseInt(slider.value));

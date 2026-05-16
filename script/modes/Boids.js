@@ -20,18 +20,16 @@ import { getDistance, getRandomInt } from "../utils.js"
 
 export class Boids {
     constructor() {
+        this.sliderRefs = {};
         this.panels = ["boidsInfoPanel", "rulesPanelContainer", "rulesPanel", "boidsControlPanel"];
         this.grid = new Grid(CELLSIZE);
         this.boids = [];
         this.spawnType = 2;
         let type = 0;
         for (let i = 0; i < BOID_POPULATION; i++) {
-            if (i < BOID_POPULATION * 0.25) type = 0;
-            else if (i < BOID_POPULATION * 0.5) type = 1;
-            else if (i < BOID_POPULATION * 0.75) type = 2;
-            else type = 3;
-
+            const type = Math.floor(i / BOID_POPULATION * TYPES.length);
             const b = new Particle(TYPES[type]);
+
             b.vx = (Math.random() - 0.5) * 2;
             b.vy = (Math.random() - 0.5) * 2;
             this.boids.push(b)
@@ -147,9 +145,28 @@ export class Boids {
         b.y += b.vy;
     }
 
+    handleMouse(mouseMode) {
+        if (mouseMode === "attract")
+            this.spawnBoid(null, mouse.x, mouse.y);
+        if (mouseMode === "repulse")
+            this.clearBoidsInZone(mouse.x, mouse.y, CURSOR_RADIUS * 3);
+    }
+
+    updateSliders() {
+        if (this.sliderRefs) {
+            const counts = this.getCountByType();
+            TYPES.forEach(type => {
+                const ref = this.sliderRefs[type.name];
+                if (ref) {
+                    ref.slider.value = counts[type.name];
+                    ref.value.textContent = counts[type.name];
+                }
+            })
+        }
+    }
+
     update(mouseMode, ruleType = "STRONG") {
-        if (mouseMode === "attract") this.spawnBoid(null, mouse.x, mouse.y);
-        if (mouseMode === "repulse") this.clearBoidsInZone(mouse.x, mouse.y, CURSOR_RADIUS * 3);
+        this.handleMouse(mouseMode);
         this.grid.clear();
         this.boids.forEach(b => this.grid.insert(b));
         this.boids.forEach(b => {
@@ -158,6 +175,7 @@ export class Boids {
             this.adjustSpeed(b);
             b.draw();
         })
+        this.updateSliders();
     }
 
     destroy() {
