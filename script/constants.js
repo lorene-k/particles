@@ -1,4 +1,4 @@
-// *************************************** GLOBAL
+// ********************************************************************* GLOBAL
 export const canvas = document.getElementById('canvas');
 export const ctx = canvas.getContext('2d');
 export const mouse = { x: -9999, y: -9999 };
@@ -7,7 +7,7 @@ export const LEFT_CLICK = 0;
 export const RIGHT_CLICK = 2;
 export const CURSOR_RADIUS = 12;
 
-// ************************************ PARTICLES
+// ****************************************************************** PARTICLES
 export const MOUSE_MIN_DISTANCE = 80;
 export const PARTICLE_MIN_DISTANCE = 20;
 export const FORCE_STRENGTH = 5;
@@ -16,11 +16,6 @@ export const MIN_PARTICLE_SIZE = 4;
 export const MAX_PARTICLE_SIZE = 7;
 export const PARTICLE_POPULATION = 1000;
 export const MARGIN_SIZE = 5;
-export const PARTICLE_SLIDER = {
-    min: -1,
-    max: 1,
-    step: 0.01,
-}
 
 export const TYPES = [
     { name: 'blue', color: '#232fb4', size: 4 },
@@ -29,6 +24,13 @@ export const TYPES = [
     { name: 'cyan', color: '#2fffd8', size: 7 }
 ];
 
+// ************************************************************** PARTICLE LIFE
+export const PARTICLE_SLIDER = {
+    min: -1,
+    max: 1,
+    step: 0.01,
+}
+
 export const PARTICLE_RULES = {
     blue: { purple: 0.4, blue: 0.1, pink: -0.3, cyan: 0.5 },
     pink: { purple: -0.2, blue: 0.3, pink: 0.1, cyan: -0.4 },
@@ -36,7 +38,7 @@ export const PARTICLE_RULES = {
     cyan: { purple: 0.1, blue: -0.1, pink: 0.4, cyan: 0.2 },
 }
 
-// **************************************** BOIDS
+// ********************************************************************** BOIDS
 export const WALL_TURNFORCE = 0.5;
 export const BOID_POPULATION = 400;
 export const BOIDS_MIN_DISTANCE = 30;
@@ -57,7 +59,7 @@ export const BOIDS_SLIDER = {
     step: 0.0001,
 }
 
-// ********************************** RULES PANEL
+// **************************************************************** RULES PANEL
 
 export const RULES_PANEL_CONFIG = {
     particleLife: {
@@ -66,6 +68,7 @@ export const RULES_PANEL_CONFIG = {
         rules: PARTICLE_RULES,
         labelFn: (from, to) => `${from} → ${to}`,
         decimals: 2,
+        mode: "particleLife"
     },
     boids: {
         title: "Force weights",
@@ -73,5 +76,6 @@ export const RULES_PANEL_CONFIG = {
         rules: BOIDS_FORCES,
         labelFn: (from, to) => to,
         decimals: 4,
+        mode: "boids"
     }
 }

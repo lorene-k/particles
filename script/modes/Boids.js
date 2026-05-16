@@ -20,7 +20,7 @@ import { getDistance, getRandomInt } from "../utils.js"
 
 export class Boids {
     constructor() {
-        this.panels = ["boidsInfoPanel", "rulesPanelContainer"];
+        this.panels = ["boidsInfoPanel", "rulesPanelContainer", "rulesPanel", "boidsControlPanel"];
         this.grid = new Grid(CELLSIZE);
         this.boids = [];
         this.spawnType = 2;
@@ -38,12 +38,28 @@ export class Boids {
         }
     }
 
-    adjustBoidCount() {
-        while (this.boids.length > target) {
-            this.boids.pop();
-        }
-        while (this.boids.length < target) {
-            this.spawnBoid(mouse.x, mouse.y);
+    getCountByType() {
+        const counts = {};
+        TYPES.forEach(t => counts[t.name] = 0);
+        this.boids.forEach(b => counts[b.type]++);
+        return counts;
+    }
+
+    syncCountByType(type, targetValue) {
+        const count = this.boids.filter(b => b.type === type).length;
+        if (count < targetValue) {
+            for (let i = 0; i < targetValue - count; i++) {
+                this.spawnBoid(type);
+            }
+        } else if (count > targetValue) {
+            let removed = 0;
+            this.boids = this.boids.filter(b => {
+                if (b.type === type && removed < count - targetValue) {
+                    removed++;
+                    return false;
+                }
+                return true;
+            });
         }
     }
 
@@ -54,11 +70,14 @@ export class Boids {
         })
     }
 
-    spawnBoid(x, y) {
-        const b = new Particle(TYPES[this.spawnType]);
+    spawnBoid(typeName, x, y) {
+        const type = TYPES.find(t => t.name === typeName) || TYPES[this.spawnType];
+        const b = new Particle(type);
 
-        b.x = x;
-        b.y = y;
+        if (x !== undefined && y !== undefined) {
+            b.x = x;
+            b.y = y;
+        }
         b.vx = (Math.random() - 0.5) * 2;
         b.vy = (Math.random() - 0.5) * 2;
         this.boids.push(b);
@@ -129,7 +148,7 @@ export class Boids {
     }
 
     update(mouseMode, ruleType = "STRONG") {
-        if (mouseMode === "attract") this.spawnBoid(mouse.x, mouse.y);
+        if (mouseMode === "attract") this.spawnBoid(null, mouse.x, mouse.y);
         if (mouseMode === "repulse") this.clearBoidsInZone(mouse.x, mouse.y, CURSOR_RADIUS * 3);
         this.grid.clear();
         this.boids.forEach(b => this.grid.insert(b));

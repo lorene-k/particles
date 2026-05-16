@@ -71,7 +71,7 @@ function setMode(mode) {
     activeMode.panels.forEach(p => hidePanel(p));
     activeMode.destroy();
     activeMode = MODE_MAP[mode]();
-    activeMode.panels.forEach(p => showPanel(p, mode));
+    activeMode.panels.forEach(p => showPanel(p, mode, activeMode));
 }
 
 function animate() {

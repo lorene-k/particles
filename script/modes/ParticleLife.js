@@ -12,7 +12,7 @@ import { getRandomInt, getDistance } from "../utils.js"
 
 export class ParticleLife {
     constructor() {
-        this.panels = ["rulesPanelContainer"];
+        this.panels = ["rulesPanelContainer", "rulesPanel"];
         this.grid = new Grid(CELLSIZE);
         this.particles = [];
         let type = 0;

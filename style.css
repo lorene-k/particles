@@ -22,7 +22,7 @@ canvas {
     font-family: "Avenir", sans-serif;
 }
 
-#modePanel, #freeParticlesInfoPanel, #boidsInfoPanel, #rulesPanelContainer, #rulesPanel {
+#modePanel, #freeParticlesInfoPanel, #boidsInfoPanel, #rulesPanelContainer, #rulesPanel, #boidsControlPanel {
     flex-direction: column;
     gap: 4px;
     padding: 12px;
@@ -38,7 +38,7 @@ canvas {
     display: flex;
 }
 
-#boidsInfoPanel, #rulesPanelContainer {
+#boidsInfoPanel, #rulesPanelContainer, #rulesPanel, #boidsControlPanel {
     display: none;
 }
 
