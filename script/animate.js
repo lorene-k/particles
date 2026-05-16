@@ -1,5 +1,5 @@
 
-import { canvas, ctx, mouse } from "./constants.js";
+import { canvas, ctx, mouse, CURSOR_RADIUS } from "./constants.js";
 import { initPanel, showPanel, hidePanel, buildRulesPanel } from "./panel.js";
 import { FreeParticles } from "./modes/FreeParticles.js";
 import { ParticleLife } from "./modes/ParticleLife.js";
@@ -10,6 +10,7 @@ import { Boids } from "./modes/Boids.js";
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let mouseMode = "neutral";
+let activeModeStr = "freeParticles";
 let activeMode = new FreeParticles();
 export const MODE_MAP = {
     freeParticles: () => new FreeParticles(),
@@ -46,19 +47,27 @@ window.addEventListener('resize', () => {
 
 function drawCursor() {
     ctx.beginPath();
-    ctx.arc(mouse.x, mouse.y, 12, 0, Math.PI * 2);
+    ctx.arc(mouse.x, mouse.y, CURSOR_RADIUS, 0, Math.PI * 2);
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
     ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(mouse.x, mouse.y, 12, 0, Math.PI * 2);
+    ctx.arc(mouse.x, mouse.y, CURSOR_RADIUS, 0, Math.PI * 2);
     ctx.strokeStyle = 'rgb(255, 255, 255)';
     ctx.lineWidth = 1;
     ctx.stroke();
+
+    if (mouseMode === "repulse" && activeModeStr === "boids") {
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, CURSOR_RADIUS * 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+        ctx.fill();
+    }
 }
 
 function setMode(mode) {
+    activeModeStr = mode;
     activeMode.panels.forEach(p => hidePanel(p));
     activeMode.destroy();
     activeMode = MODE_MAP[mode]();

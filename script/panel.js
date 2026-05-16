@@ -41,11 +41,11 @@ export function buildRulesPanel(rulesConfig) {
             slider.value = rulesConfig.rules[from][to];
 
             const valueDisplay = document.createElement('span');
-            valueDisplay.textContent = rulesConfig.rules[from][to].toFixed(rulesConfig.fixedSize);
+            valueDisplay.textContent = rulesConfig.rules[from][to].toFixed(rulesConfig.decimals);
 
             slider.addEventListener('input', () => {
                 rulesConfig.rules[from][to] = parseFloat(slider.value);
-                valueDisplay.textContent = parseFloat(slider.value).toFixed(rulesConfig.fixedSize);
+                valueDisplay.textContent = parseFloat(slider.value).toFixed(rulesConfig.decimals);
             });
 
             row.appendChild(label);

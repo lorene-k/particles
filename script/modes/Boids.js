@@ -9,6 +9,7 @@ import {
     BOIDS_MAX_SPEED,
     BOIDS_MIN_SPEED,
     BOIDS_PERCEPTION_RADIUS,
+    CURSOR_RADIUS,
     canvas,
     TYPES,
     mouse,
@@ -22,6 +23,7 @@ export class Boids {
         this.panels = ["boidsInfoPanel", "rulesPanelContainer"];
         this.grid = new Grid(CELLSIZE);
         this.boids = [];
+        this.spawnType = 2;
         let type = 0;
         for (let i = 0; i < BOID_POPULATION; i++) {
             if (i < BOID_POPULATION * 0.25) type = 0;
@@ -34,6 +36,32 @@ export class Boids {
             b.vy = (Math.random() - 0.5) * 2;
             this.boids.push(b)
         }
+    }
+
+    adjustBoidCount() {
+        while (this.boids.length > target) {
+            this.boids.pop();
+        }
+        while (this.boids.length < target) {
+            this.spawnBoid(mouse.x, mouse.y);
+        }
+    }
+
+    clearBoidsInZone(x, y, radius) {
+        this.boids = this.boids.filter(b => {
+            const { distance } = getDistance(b.x, b.y, x, y);
+            return distance > radius;
+        })
+    }
+
+    spawnBoid(x, y) {
+        const b = new Particle(TYPES[this.spawnType]);
+
+        b.x = x;
+        b.y = y;
+        b.vx = (Math.random() - 0.5) * 2;
+        b.vy = (Math.random() - 0.5) * 2;
+        this.boids.push(b);
     }
 
     applyForces(b, neighbors) {
@@ -101,6 +129,8 @@ export class Boids {
     }
 
     update(mouseMode, ruleType = "STRONG") {
+        if (mouseMode === "attract") this.spawnBoid(mouse.x, mouse.y);
+        if (mouseMode === "repulse") this.clearBoidsInZone(mouse.x, mouse.y, CURSOR_RADIUS * 3);
         this.grid.clear();
         this.boids.forEach(b => this.grid.insert(b));
         this.boids.forEach(b => {

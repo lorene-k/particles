@@ -5,6 +5,7 @@ export const mouse = { x: -9999, y: -9999 };
 
 export const LEFT_CLICK = 0;
 export const RIGHT_CLICK = 2;
+export const CURSOR_RADIUS = 12;
 
 // ************************************ PARTICLES
 export const MOUSE_MIN_DISTANCE = 80;
@@ -64,13 +65,13 @@ export const RULES_PANEL_CONFIG = {
         slider: PARTICLE_SLIDER,
         rules: PARTICLE_RULES,
         labelFn: (from, to) => `${from} → ${to}`,
-        fixedSize: 2,
+        decimals: 2,
     },
     boids: {
         title: "Force weights",
         slider: BOIDS_SLIDER,
         rules: BOIDS_FORCES,
         labelFn: (from, to) => to,
-        fixedSize: 4,
+        decimals: 4,
     }
 }
