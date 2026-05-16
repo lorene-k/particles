@@ -8,11 +8,11 @@ import {
 } from "../constants.js";
 import { Particle } from "../Particle.js";
 import { Grid } from "../Grid.js";
-import { getRandomInt } from "../utils.js"
+import { getRandomInt, getDistance } from "../utils.js"
 
 export class ParticleLife {
     constructor() {
-        this.panel = "rulesPanelContainer";
+        this.panels = ["rulesPanelContainer"];
         this.grid = new Grid(CELLSIZE);
         this.particles = [];
         let type = 0;
@@ -31,9 +31,7 @@ export class ParticleLife {
         let fy = 0;
 
         neighbors.forEach(n => {
-            const dx = n.x - p.x;
-            const dy = n.y - p.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const { distance, dx, dy } = getDistance(p.x, p.y, n.x, n.y);
             if (distance > 0 && distance < 80) {
                 const attraction = PARTICLE_RULES[p.type][n.type];
                 const force = attraction / distance;

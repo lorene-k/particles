@@ -59,10 +59,10 @@ function drawCursor() {
 }
 
 function setMode(mode) {
-    hidePanel(activeMode.panel);
+    activeMode.panels.forEach(p => hidePanel(p));
     activeMode.destroy();
     activeMode = MODE_MAP[mode]();
-    showPanel(activeMode.panel);
+    activeMode.panels.forEach(p => showPanel(p, mode));
 }
 
 function animate() {
@@ -72,8 +72,6 @@ function animate() {
     drawCursor();
     requestAnimationFrame(animate);
 }
-
-buildRulesPanel();
 
 initPanel(setMode);
 animate();

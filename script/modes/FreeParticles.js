@@ -9,10 +9,11 @@ import {
 } from "../constants.js";
 import { Particle } from "../Particle.js";
 import { Grid } from "../Grid.js";
+import { getDistance } from "../utils.js"
 
 export class FreeParticles {
     constructor() {
-        this.panel = "freeParticlesInfoPanel";
+        this.panels = ["freeParticlesInfoPanel"];
         this.grid = new Grid(CELLSIZE);
         this.particles = [];
         for (let i = 0; i < PARTICLE_POPULATION; i++) {
@@ -21,9 +22,7 @@ export class FreeParticles {
     }
 
     reactToMouse(p, mouseMode) {
-        const dx = mouse.x - p.x;
-        const dy = mouse.y - p.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const { distance, dx, dy } = getDistance(p.x, p.y, mouse.x, mouse.y);
 
         if (distance > 0 && distance < MOUSE_MIN_DISTANCE) {
             const force = (MOUSE_MIN_DISTANCE - distance) / MOUSE_MIN_DISTANCE;
@@ -39,9 +38,8 @@ export class FreeParticles {
 
     reactToNeighbors(p, neighbors) {
         neighbors.forEach(n => {
-            const dx = n.x - p.x;
-            const dy = n.y - p.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const { distance, dx, dy } = getDistance(p.x, p.y, n.x, n.y);
+
             if (distance > 0 && distance < PARTICLE_MIN_DISTANCE) {
                 const force = (PARTICLE_MIN_DISTANCE - distance) / PARTICLE_MIN_DISTANCE;
                 p.vx -= (dx / distance) * force * FORCE_STRENGTH;

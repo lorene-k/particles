@@ -1,21 +1,10 @@
 
+import { RULES_PANEL_CONFIG } from "./constants.js";
+
 export function initPanel(setMode) {
     document.querySelectorAll('#modePanel button').forEach(btn => {
         btn.addEventListener('click', () => setMode(btn.dataset.mode));
     })
-    document.getElementById('rulesPanelContainer').addEventListener('click', (e) => {
-        if (e.target !== e.currentTarget) return;
-        if (document.getElementById('rulesPanel').style.display === 'flex') {
-            hidePanel('rulesPanel');
-        } else {
-            showPanel('rulesPanel');
-        }
-    });
-}
-
-export function showPanel(type) {
-    if (!type) return;
-    document.getElementById(type).style.display = 'flex';
 }
 
 export function hidePanel(type) {
@@ -23,32 +12,40 @@ export function hidePanel(type) {
     document.getElementById(type).style.display = 'none';
 }
 
-import { PARTICLE_RULES } from "./constants.js";
+export function showPanel(type, mode) {
+    if (!type) return;
+    if (type === 'rulesPanelContainer') buildRulesPanel(RULES_PANEL_CONFIG[mode]);
+    document.getElementById(type).style.display = 'flex';
+}
 
-export function buildRulesPanel() {
+export function buildRulesPanel(rulesConfig) {
     const panel = document.getElementById('rulesPanel');
+    const title = document.getElementById('rulesPanelTitle');
 
-    Object.keys(PARTICLE_RULES).forEach(from => {
-        Object.keys(PARTICLE_RULES[from]).forEach(to => {
+    title.textContent = rulesConfig.title;
+    panel.innerHTML = '';
+
+    Object.keys(rulesConfig.rules).forEach(from => {
+        Object.keys(rulesConfig.rules[from]).forEach(to => {
             const row = document.createElement('div');
             row.className = 'rule-row';
 
             const label = document.createElement('span');
-            label.textContent = `${from} → ${to}`;
+            label.textContent = rulesConfig.labelFn(from, to);
 
             const slider = document.createElement('input');
             slider.type = 'range';
-            slider.min = -1;
-            slider.max = 1;
-            slider.step = 0.01;
-            slider.value = PARTICLE_RULES[from][to];
+            slider.min = rulesConfig.slider.min;
+            slider.max = rulesConfig.slider.max;
+            slider.step = rulesConfig.slider.step;
+            slider.value = rulesConfig.rules[from][to];
 
             const valueDisplay = document.createElement('span');
-            valueDisplay.textContent = PARTICLE_RULES[from][to].toFixed(2);
+            valueDisplay.textContent = rulesConfig.rules[from][to].toFixed(rulesConfig.fixedSize);
 
             slider.addEventListener('input', () => {
-                PARTICLE_RULES[from][to] = parseFloat(slider.value);
-                valueDisplay.textContent = parseFloat(slider.value).toFixed(2);
+                rulesConfig.rules[from][to] = parseFloat(slider.value);
+                valueDisplay.textContent = parseFloat(slider.value).toFixed(rulesConfig.fixedSize);
             });
 
             row.appendChild(label);
