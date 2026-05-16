@@ -93,3 +93,15 @@ canvas {
     font-weight: semi-bold;
     color: #fff;
 }
+
+.boids-color-btn {
+    width: 17px;
+    height: 17px;
+    margin-left: 4px;
+    margin-right: 4px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: box-shadow 0.2s;
+}

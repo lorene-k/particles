@@ -20,6 +20,45 @@ export function showPanel(type, mode, activeMode) {
 }
 
 // **************************************************************** RULES PANEL
+function buildBoidsColorButtons(panel, activeMode) {
+    const row = document.createElement('div');
+    row.className = 'rule-row';
+
+    const label = document.createElement('span');
+    label.textContent = "spawn Color";
+    row.appendChild(label);
+
+    let selectedBtn = null;
+    const shadow = "0 0 8px 2px white";
+    const border = "1.8px solid rgba(255, 255, 255, 0.8)";
+
+    TYPES.forEach((type, i) => {
+        const btn = document.createElement('button');
+
+        btn.className = 'boids-color-btn';
+        btn.style.backgroundColor = type.color;
+        if (activeMode.spawnType === i) {
+            btn.style.boxShadow = shadow;
+            btn.style.border = border;
+            selectedBtn = btn;
+        }
+
+        btn.addEventListener('click', () => {
+            if (selectedBtn) {
+                selectedBtn.style.boxShadow = 'none';
+                selectedBtn.style.border = 'none';
+            }
+            activeMode.spawnType = i;
+            btn.style.boxShadow = shadow;
+            btn.style.border = border;
+            selectedBtn = btn;
+        });
+        row.appendChild(btn);
+    });
+
+    panel.appendChild(row);
+}
+
 function buildBoidsControlPanel(panel, title, activeMode) {
     const counts = activeMode.getCountByType();
 
@@ -54,6 +93,8 @@ function buildBoidsControlPanel(panel, title, activeMode) {
         row.appendChild(value);
         panel.appendChild(row);
     })
+
+    buildBoidsColorButtons(panel, activeMode);
 }
 
 export function buildRulesPanel(rulesConfig, activeMode) {
