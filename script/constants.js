@@ -59,6 +59,26 @@ export const BOIDS_SLIDER = {
     step: 0.0001,
 }
 
+// ********************************************************* REACTION DIFFUSION
+export const RD_DA = 1.0;
+export const RD_DB = 0.5;
+export const RD_RESOLUTION = 2; // 1 cell = 2x2 px
+export const RD_F = 0.035;
+export const RD_K = 0.065;
+export const RD_SEED_RADIUS = 10;
+
+export const RD_WEIGHTS = {
+    center: 1.0,
+    cardinal: -0.2,
+    diagonal: -0.05,
+}
+
+export const RD_PRESETS = {
+    stripes: { f: 0.040, k: 0.060 },
+    coral: { f: 0.055, k: 0.062 },
+    labyrinth: { f: 0.029, k: 0.057 },
+}
+
 // **************************************************************** RULES PANEL
 
 export const RULES_PANEL_CONFIG = {

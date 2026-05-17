@@ -26,7 +26,7 @@ export class ParticleLife {
         }
     }
 
-    applyRules(p, neighbors, ruleType) {
+    applyRules(p, neighbors) {
         let fx = 0;
         let fy = 0;
 
@@ -44,11 +44,11 @@ export class ParticleLife {
         p.vy = (p.vy + fy) * 0.5;
     }
 
-    update(mouseMode, ruleType = "STRONG") {
+    update(mouseMode) {
         this.grid.clear();
         this.particles.forEach(p => this.grid.insert(p));
         this.particles.forEach(p => {
-            this.applyRules(p, this.grid.getNeighbors(p), ruleType);
+            this.applyRules(p, this.grid.getNeighbors(p));
             p.moveParticle();
             p.draw();
         })

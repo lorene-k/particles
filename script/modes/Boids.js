@@ -165,7 +165,7 @@ export class Boids {
         }
     }
 
-    update(mouseMode, ruleType = "STRONG") {
+    update(mouseMode) {
         this.handleMouse(mouseMode);
         this.grid.clear();
         this.boids.forEach(b => this.grid.insert(b));
