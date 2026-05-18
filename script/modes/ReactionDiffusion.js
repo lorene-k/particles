@@ -1,14 +1,19 @@
-import { RD_DA, RD_WEIGHTS } from "../constants.js";
 import {
     canvas,
+    ctx,
     RD_RESOLUTION,
     RD_SEED_RADIUS,
     RD_F,
-    RD_K
-} from "./constants.js"
+    RD_K,
+    RD_DB,
+    RD_DA,
+    RD_WEIGHTS
+} from "../constants.js"
 
 export class ReactionDiffusion {
     constructor() {
+        this.panels = [];
+        this.imageData = ctx.createImageData(canvas.width, canvas.height);
         this.width = Math.floor(canvas.width / RD_RESOLUTION);
         this.height = Math.floor(canvas.height / RD_RESOLUTION);
         this.grid = new Array(this.width * this.height).fill(null).map(() => ({ a: 1, b: 0 }));
@@ -71,17 +76,39 @@ export class ReactionDiffusion {
         const newA = cell.a + (diffusionA - reaction + feedTerm);
         const newB = cell.b + (diffusionB + reaction - killTerm);
 
-        return { newA, newB };
+        return {
+            newA: Math.max(0, Math.min(1, newA)),
+            newB:  Math.max(0, Math.min(1, newB))
+        };
+    }
+
+    render() {
+        this.grid.forEach((cell, i) => {
+            const px = RD_RESOLUTION * (i % this.width);
+            const py = RD_RESOLUTION * Math.floor(i / this.width);
+
+            for (let dy = 0; dy < RD_RESOLUTION; dy++) {
+                for (let dx = 0; dx < RD_RESOLUTION; dx++) {
+                    const index = ((py + dy) * canvas.width + (px + dx)) * 4;
+                    this.imageData.data[index] = 255 * cell.b;      // R
+                    this.imageData.data[index + 1] = 255 * cell.b;  // G
+                    this.imageData.data[index + 2] = 255 * cell.b;  // B
+                    this.imageData.data[index + 3] = 255;           // A
+                }
+            }
+        })
+        ctx.putImageData(this.imageData, 0, 0);
     }
 
     update(mouseMode) {
-        this.handleMouse(mouseMode);
+        // this.handleMouse(mouseMode);
         this.grid.forEach((cell, i) => {
             const { newA, newB } = this.applyGrayScott(cell, i);
             this.nextGrid[i].a = newA;
             this.nextGrid[i].b = newB;
         });
-        [this.grid, this.nextGrid] = [this.nextGrid, this.Grid];
+        [this.grid, this.nextGrid] = [this.nextGrid, this.grid];
+        this.render();
     }
 
     destroy() {

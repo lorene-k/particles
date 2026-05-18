@@ -84,8 +84,10 @@ function setMode(mode) {
 }
 
 function animate() {
-    ctx.fillStyle = 'rgba(11, 11, 17, 0.5)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    if (activeModeStr != "reactionDiffusion") {
+        ctx.fillStyle = 'rgba(11, 11, 17, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+    }
     activeMode.update(mouseMode);
     drawCursor();
     requestAnimationFrame(animate);

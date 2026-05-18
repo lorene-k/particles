@@ -63,14 +63,14 @@ export const BOIDS_SLIDER = {
 export const RD_DA = 1.0;
 export const RD_DB = 0.5;
 export const RD_RESOLUTION = 2; // 1 cell = 2x2 px
-export const RD_F = 0.035;
-export const RD_K = 0.065;
+export const RD_F = 0.055;
+export const RD_K = 0.062;
 export const RD_SEED_RADIUS = 10;
 
 export const RD_WEIGHTS = {
-    center: 1.0,
-    cardinal: -0.2,
-    diagonal: -0.05,
+    center: -1.0,
+    cardinal: 0.2,
+    diagonal: 0.05,
 }
 
 export const RD_PRESETS = {
