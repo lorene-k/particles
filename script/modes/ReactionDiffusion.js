@@ -3,8 +3,7 @@ import {
     ctx,
     RD_RESOLUTION,
     RD_SEED_RADIUS,
-    RD_F,
-    RD_K,
+    RD_RULES,
     RD_DB,
     RD_DA,
     RD_WEIGHTS
@@ -12,7 +11,7 @@ import {
 
 export class ReactionDiffusion {
     constructor() {
-        this.panels = [];
+        this.panels = ["rulesPanelContainer", "rulesPanel"];
         this.imageData = ctx.createImageData(canvas.width, canvas.height);
         this.width = Math.floor(canvas.width / RD_RESOLUTION);
         this.height = Math.floor(canvas.height / RD_RESOLUTION);
@@ -67,12 +66,13 @@ export class ReactionDiffusion {
 
     applyGrayScott(cell, i) {
         const { laplacianA, laplacianB } = this.getLaplacians(i);
+        const { feed, kill } = RD_RULES.rates;
 
         const diffusionA = RD_DA * laplacianA;
         const diffusionB = RD_DB * laplacianB;
         const reaction = cell.a * cell.b * cell.b;
-        const feedTerm = RD_F * (1 - cell.a);
-        const killTerm = (RD_K + RD_F) * cell.b;
+        const feedTerm = feed * (1 - cell.a);
+        const killTerm = (kill + feed) * cell.b;
         const newA = cell.a + (diffusionA - reaction + feedTerm);
         const newB = cell.b + (diffusionB + reaction - killTerm);
 
@@ -90,9 +90,9 @@ export class ReactionDiffusion {
             for (let dy = 0; dy < RD_RESOLUTION; dy++) {
                 for (let dx = 0; dx < RD_RESOLUTION; dx++) {
                     const index = ((py + dy) * canvas.width + (px + dx)) * 4;
-                    this.imageData.data[index] = 255 * cell.b;      // R
+                    this.imageData.data[index] = 47 * cell.b;      // R
                     this.imageData.data[index + 1] = 255 * cell.b;  // G
-                    this.imageData.data[index + 2] = 255 * cell.b;  // B
+                    this.imageData.data[index + 2] = 216 * cell.b;  // B
                     this.imageData.data[index + 3] = 255;           // A
                 }
             }

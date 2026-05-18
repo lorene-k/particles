@@ -89,7 +89,7 @@ function animate() {
         ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
     activeMode.update(mouseMode);
-    drawCursor();
+    if (activeModeStr != "reactionDiffusion") drawCursor();
     requestAnimationFrame(animate);
 }
 
