@@ -78,7 +78,7 @@ export class ReactionDiffusion {
 
         return {
             newA: Math.max(0, Math.min(1, newA)),
-            newB:  Math.max(0, Math.min(1, newB))
+            newB: Math.max(0, Math.min(1, newB))
         };
     }
 
@@ -90,10 +90,11 @@ export class ReactionDiffusion {
             for (let dy = 0; dy < RD_RESOLUTION; dy++) {
                 for (let dx = 0; dx < RD_RESOLUTION; dx++) {
                     const index = ((py + dy) * canvas.width + (px + dx)) * 4;
-                    this.imageData.data[index] = 47 * cell.b;      // R
-                    this.imageData.data[index + 1] = 255 * cell.b;  // G
-                    this.imageData.data[index + 2] = 216 * cell.b;  // B
-                    this.imageData.data[index + 3] = 255;           // A
+                    const brightness = Math.pow(cell.b, 0.3);
+                    this.imageData.data[index] = 47 * brightness;       // R
+                    this.imageData.data[index + 1] = 255 * brightness;  // G
+                    this.imageData.data[index + 2] = 216 * brightness;  // B
+                    this.imageData.data[index + 3] = 255;               // A
                 }
             }
         })
@@ -115,10 +116,27 @@ export class ReactionDiffusion {
     }
 
     handleResize() {
-        // this.boids.forEach(b => {
-        //     b.x = Math.min(b.x, canvas.width);
-        //     b.y = Math.min(b.y, canvas.height);
-        // });
+        console.log("CALLED")
+        const oldWidth = this.width;
+        const oldHeight = this.height;
+
+        this.width = Math.floor(canvas.width / RD_RESOLUTION);
+        this.height = Math.floor(canvas.height / RD_RESOLUTION);
+        this.nextGrid = new Array(this.width * this.height).fill(null).map(() => ({ a: 1, b: 0 }));
+
+        const tmpGrid = new Array(this.width * this.height).fill(null).map(() => ({ a: 1, b: 0 }));
+        const offsetX = Math.floor((this.width - oldWidth) / 2);
+        const offsetY = Math.floor((this.height - oldHeight) / 2);
+
+        this.grid.forEach((cell, i) => {
+            const x = i % oldWidth;
+            const y = Math.floor(i / oldWidth);
+            if (x < this.width && y < this.height)
+                tmpGrid[(y + offsetY) * this.width + (x + offsetX)] = { ...cell };
+        })
+
+        this.grid = tmpGrid;
+        this.imageData = ctx.createImageData(canvas.width, canvas.height);
     }
 }
 

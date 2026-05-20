@@ -5,7 +5,6 @@ import { FreeParticles } from "./modes/FreeParticles.js";
 import { ParticleLife } from "./modes/ParticleLife.js";
 import { Boids } from "./modes/Boids.js";
 import { ReactionDiffusion } from "./modes/ReactionDiffusion.js";
-// import { Fourier } from "./modes/Fourier.js";
 
 // ******************************************************************** GLOBALS
 canvas.width = window.innerWidth;
@@ -36,17 +35,17 @@ window.addEventListener('mousedown', (e) => {
     if (e.button === 2) {
         mouseMode = "repulse";
     }
-})
+});
 
 window.addEventListener('mouseup', (e) => {
     mouseMode = "neutral";
-})
+});
 
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     if (activeMode.handleResize) activeMode.handleResize();
-})
+});
 
 document.getElementById('leftPanel').addEventListener('mousedown', (e) => {
     e.stopPropagation();
