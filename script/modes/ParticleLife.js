@@ -4,7 +4,8 @@ import {
     TYPES,
     PARTICLE_RULES,
     canvas,
-    mouse
+    mouse,
+    PARTICLE_LIFE_RADIUS
 } from "../constants.js";
 import { Particle } from "../Particle.js";
 import { Grid } from "../Grid.js";
@@ -15,13 +16,9 @@ export class ParticleLife {
         this.panels = ["rulesPanelContainer", "rulesPanel"];
         this.grid = new Grid(CELLSIZE);
         this.particles = [];
-        let type = 0;
+
         for (let i = 0; i < PARTICLE_POPULATION; i++) {
-            // const type = TYPES[getRandomInt(0, TYPES.length - 1)];
-            if (i < PARTICLE_POPULATION * 0.25) type = 0;
-            else if (i < PARTICLE_POPULATION * 0.5) type = 1;
-            else if (i < PARTICLE_POPULATION * 0.75) type = 2;
-            else type = 3;
+            const type = Math.floor(i / PARTICLE_POPULATION * TYPES.length);
             this.particles.push(new Particle(TYPES[type]))
         }
     }
@@ -32,7 +29,7 @@ export class ParticleLife {
 
         neighbors.forEach(n => {
             const { distance, dx, dy } = getDistance(p.x, p.y, n.x, n.y);
-            if (distance > 0 && distance < 80) {
+            if (distance > 0 && distance < PARTICLE_LIFE_RADIUS) {
                 const attraction = PARTICLE_RULES[p.type][n.type];
                 const force = attraction / distance;
                 fx += force * dx;

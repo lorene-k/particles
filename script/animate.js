@@ -83,7 +83,7 @@ function setMode(mode) {
 }
 
 function animate() {
-    if (activeModeStr != "reactionDiffusion") {
+    if (activeModeStr !== "reactionDiffusion") {
         ctx.fillStyle = 'rgba(11, 11, 17, 0.5)';
         ctx.fillRect(0, 0, canvas.width, canvas.height)
     }

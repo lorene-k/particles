@@ -38,6 +38,8 @@ export const PARTICLE_RULES = {
     cyan: { purple: 0.1, blue: -0.1, pink: 0.4, cyan: 0.2 },
 }
 
+export const PARTICLE_LIFE_RADIUS = 80;
+
 // ********************************************************************** BOIDS
 export const WALL_TURNFORCE = 0.5;
 export const BOID_POPULATION = 400;

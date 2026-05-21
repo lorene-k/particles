@@ -25,7 +25,7 @@ export class Boids {
         this.grid = new Grid(CELLSIZE);
         this.boids = [];
         this.spawnType = 2;
-        let type = 0;
+
         for (let i = 0; i < BOID_POPULATION; i++) {
             const type = Math.floor(i / BOID_POPULATION * TYPES.length);
             const b = new Particle(TYPES[type]);
@@ -150,6 +150,7 @@ export class Boids {
             this.spawnBoid(null, mouse.x, mouse.y);
         if (mouseMode === "repulse")
             this.clearBoidsInZone(mouse.x, mouse.y, CURSOR_RADIUS * 3);
+        this.updateSliders();
     }
 
     updateSliders() {
@@ -158,8 +159,11 @@ export class Boids {
             TYPES.forEach(type => {
                 const ref = this.sliderRefs[type.name];
                 if (ref) {
-                    ref.slider.value = counts[type.name];
-                    ref.value.textContent = counts[type.name];
+                    const count = counts[type.name];
+                    if (Number(ref.slider.value) !== count) {
+                        ref.slider.value = counts[type.name];
+                        ref.value.textContent = counts[type.name];
+                    }
                 }
             })
         }
@@ -175,7 +179,6 @@ export class Boids {
             this.adjustSpeed(b);
             b.draw();
         })
-        this.updateSliders();
     }
 
     destroy() {

@@ -16,6 +16,7 @@ export class FreeParticles {
         this.panels = ["freeParticlesInfoPanel"];
         this.grid = new Grid(CELLSIZE);
         this.particles = [];
+
         for (let i = 0; i < PARTICLE_POPULATION; i++) {
             this.particles.push(new Particle())
         }

@@ -113,10 +113,10 @@ export class ReactionDiffusion {
     }
 
     destroy() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     handleResize() {
-        console.log("CALLED")
         const oldWidth = this.width;
         const oldHeight = this.height;
 
@@ -131,65 +131,15 @@ export class ReactionDiffusion {
         this.grid.forEach((cell, i) => {
             const x = i % oldWidth;
             const y = Math.floor(i / oldWidth);
-            if (x < this.width && y < this.height)
-                tmpGrid[(y + offsetY) * this.width + (x + offsetX)] = { ...cell };
+            const newX = x + offsetX;
+            const newY = y + offsetY;
+            
+            if (newX >= 0 && newY >= 0
+                && newX < this.width && newY < this.height)
+                tmpGrid[newY * this.width + newX] = { ...cell };
         })
 
         this.grid = tmpGrid;
         this.imageData = ctx.createImageData(canvas.width, canvas.height);
     }
 }
-
-/*
-STEPS :
-
-2. Grid
-OK - Create a flat array of width * height cells, each { a: 1, b: 0 }
-OK - Seed the center with a small patch of B (concentration = 1)
-
-3. Update logic
-- For each cell, calculate laplacian(A) and laplacian(B) using the 8 neighbors
-- Apply the Gray-Scott formula to get new A and B values
-- Write results to a second buffer (never update in place — you'd corrupt neighbors)
-- Swap buffers at end of frame
-
-4. Rendering
-- Create an ImageData object
-- Map each cell's B concentration to a color
-- Write RGBA values to ImageData
-- Call ctx.putImageData() to render
-
-5. Interaction
-- Mouse draw — add B where mouse is pressed
-- Panel with f and k sliders
-
-*/
-
-/*
--  Diffusion : chemicals spread to neighbors -> A spreads faster than B
-new A = A + dA * laplacian(A)
-new B = B + dB * laplacian(B)
-
-- Reaction : A & B meet -> B consumes A (the more B there is the faster it eats A)
-reaction = A * B * B
-
-- Feed & Kill : f constantly adds A, k constant removes B
-new A = A + (dA * laplacian(A) - reaction + f * (1 - A))
-new B = B + (dB * laplacian(B)) + reaction - (k + f) * B
-*/
-
-/*
-- RESEARCH : laplacian
-1. look at cell and 8 neighbors + weights
-2. multiply each neighbor value by its weights -> sum all together
-
-- RESEARCH : gray scott model
-new A = A + (dA * laplacian(A) - reaction + f * (1 - A))
-new B = B + (dB * laplacian(B)) + reaction - (k + f) * B
-
-dA * laplacian(A) -> diffusion of A (dA = how fast)
-- (A * B * B) -> reaction = A gets consumed propotional to how much A & B²
-+ (A * B * B) -> reaction = B gains what A loses
-f * (1 - A) -> feed term = replenishes A towards concentration 1
-- (k + f) * B -> kill term = removes B so it doesnt take over
-*/

@@ -9,8 +9,8 @@ import { getRandomInt, getRandomColor, } from "./utils.js"
 
 export class Particle {
     constructor(type) {
-        this.x = Math.random() * canvas.width + MARGIN_SIZE;
-        this.y = Math.random() * canvas.height + MARGIN_SIZE;
+        this.x = Math.random() * (canvas.width - 2 * MARGIN_SIZE) + MARGIN_SIZE;
+        this.y = Math.random() * (canvas.height - 2 * MARGIN_SIZE) + MARGIN_SIZE;
         if (type) {
             this.size = type.size;
             this.color = type.color;
