@@ -15,8 +15,11 @@ export class ReactionDiffusion {
         this.imageData = ctx.createImageData(canvas.width, canvas.height);
         this.width = Math.floor(canvas.width / RD_RESOLUTION);
         this.height = Math.floor(canvas.height / RD_RESOLUTION);
-        this.grid = new Array(this.width * this.height).fill(null).map(() => ({ a: 1, b: 0 }));
-        this.nextGrid = new Array(this.width * this.height).fill(null).map(() => ({ a: 1, b: 0 }));
+        this.gridA = new Float32Array(this.width * this.height).fill(1);
+        this.gridB = new Float32Array(this.width * this.height).fill(0);
+
+        this.nextGridA = new Float32Array(this.width * this.height).fill(1);
+        this.nextGridB = new Float32Array(this.width * this.height).fill(0);
 
         const centerX = Math.floor(this.width / 2);
         const centerY = Math.floor(this.height / 2);
@@ -24,15 +27,15 @@ export class ReactionDiffusion {
         for (let y = centerY - RD_SEED_RADIUS; y < centerY + RD_SEED_RADIUS; y++) {
             for (let x = centerX - RD_SEED_RADIUS; x < centerX + RD_SEED_RADIUS; x++) {
                 if (Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2) < RD_SEED_RADIUS) {
-                    this.grid[y * this.width + x].b = 1;
-                    this.grid[y * this.width + x].a = 0;
+                    this.gridB[y * this.width + x] = 1;
+                    this.gridA[y * this.width + x] = 0;
                 }
             }
         }
     }
 
-    getLaplacians(i) {
-        const g = this.grid;
+    getLaplacian(i, grid) {
+        const g = grid;
         const w = this.width;
         const h = this.height;
         const x = i % w;
@@ -53,28 +56,27 @@ export class ReactionDiffusion {
         const bottom = g[yD * w + x];
         const bottomRight = g[yD * w + xR];
 
-        const laplacianA = (RD_WEIGHTS.center * center.a)
-            + RD_WEIGHTS.cardinal * (top.a + left.a + right.a + bottom.a)
-            + RD_WEIGHTS.diagonal * (topLeft.a + topRight.a + bottomLeft.a + bottomRight.a);
+        const laplacian = (RD_WEIGHTS.center * center)
+            + RD_WEIGHTS.cardinal * (top + left + right + bottom)
+            + RD_WEIGHTS.diagonal * (topLeft + topRight + bottomLeft + bottomRight);
 
-        const laplacianB = (RD_WEIGHTS.center * center.b)
-            + RD_WEIGHTS.cardinal * (top.b + left.b + right.b + bottom.b)
-            + RD_WEIGHTS.diagonal * (topLeft.b + topRight.b + bottomLeft.b + bottomRight.b);
-
-        return { laplacianA, laplacianB };
+        return laplacian;
     }
 
-    applyGrayScott(cell, i) {
-        const { laplacianA, laplacianB } = this.getLaplacians(i);
+    applyGrayScott(i) {
         const { feed, kill } = RD_RULES.rates;
+        const cellA = this.gridA[i];
+        const cellB = this.gridB[i];
+        const laplacianA = this.getLaplacian(i, this.gridA);
+        const laplacianB = this.getLaplacian(i, this.gridB);
 
         const diffusionA = RD_DA * laplacianA;
         const diffusionB = RD_DB * laplacianB;
-        const reaction = cell.a * cell.b * cell.b;
-        const feedTerm = feed * (1 - cell.a);
-        const killTerm = (kill + feed) * cell.b;
-        const newA = cell.a + (diffusionA - reaction + feedTerm);
-        const newB = cell.b + (diffusionB + reaction - killTerm);
+        const reaction = cellA * cellB * cellB;
+        const feedTerm = feed * (1 - cellA);
+        const killTerm = (kill + feed) * cellB;
+        const newA = cellA + (diffusionA - reaction + feedTerm);
+        const newB = cellB + (diffusionB + reaction - killTerm);
 
         return {
             newA: Math.max(0, Math.min(1, newA)),
@@ -83,32 +85,33 @@ export class ReactionDiffusion {
     }
 
     render() {
-        this.grid.forEach((cell, i) => {
+        for (let i = 0; i < this.gridB.length; i++) {
             const px = RD_RESOLUTION * (i % this.width);
             const py = RD_RESOLUTION * Math.floor(i / this.width);
+            const brightness = Math.pow(this.gridB[i], 0.3);
 
             for (let dy = 0; dy < RD_RESOLUTION; dy++) {
                 for (let dx = 0; dx < RD_RESOLUTION; dx++) {
                     const index = ((py + dy) * canvas.width + (px + dx)) * 4;
-                    const brightness = Math.pow(cell.b, 0.3);
                     this.imageData.data[index] = 47 * brightness;       // R
                     this.imageData.data[index + 1] = 255 * brightness;  // G
                     this.imageData.data[index + 2] = 216 * brightness;  // B
                     this.imageData.data[index + 3] = 255;               // A
                 }
             }
-        })
+        }
         ctx.putImageData(this.imageData, 0, 0);
     }
 
     update(mouseMode) {
         // this.handleMouse(mouseMode);
-        this.grid.forEach((cell, i) => {
-            const { newA, newB } = this.applyGrayScott(cell, i);
-            this.nextGrid[i].a = newA;
-            this.nextGrid[i].b = newB;
-        });
-        [this.grid, this.nextGrid] = [this.nextGrid, this.grid];
+        for (let i = 0; i < this.gridA.length; i++) {
+            const { newA, newB } = this.applyGrayScott(i);
+            this.nextGridA[i] = newA;
+            this.nextGridB[i] = newB;
+        }
+        [this.gridA, this.nextGridA] = [this.nextGridA, this.gridA];
+        [this.gridB, this.nextGridB] = [this.nextGridB, this.gridB];
         this.render();
     }
 
@@ -122,24 +125,31 @@ export class ReactionDiffusion {
 
         this.width = Math.floor(canvas.width / RD_RESOLUTION);
         this.height = Math.floor(canvas.height / RD_RESOLUTION);
-        this.nextGrid = new Array(this.width * this.height).fill(null).map(() => ({ a: 1, b: 0 }));
 
-        const tmpGrid = new Array(this.width * this.height).fill(null).map(() => ({ a: 1, b: 0 }));
+        const size = this.height * this.width;
         const offsetX = Math.floor((this.width - oldWidth) / 2);
         const offsetY = Math.floor((this.height - oldHeight) / 2);
 
-        this.grid.forEach((cell, i) => {
+        const tmpGridA = new Float32Array(size).fill(1);
+        const tmpGridB = new Float32Array(size).fill(0);
+        this.nextGridA = new Float32Array(size).fill(1);
+        this.nextGridB = new Float32Array(size).fill(0);
+
+        for (let i = 0; i < this.gridA.length; i++) {
             const x = i % oldWidth;
             const y = Math.floor(i / oldWidth);
             const newX = x + offsetX;
             const newY = y + offsetY;
-            
-            if (newX >= 0 && newY >= 0
-                && newX < this.width && newY < this.height)
-                tmpGrid[newY * this.width + newX] = { ...cell };
-        })
 
-        this.grid = tmpGrid;
+            if (newX >= 0 && newY >= 0 && newX < this.width && newY < this.height) {
+                const index = newY * this.width + newX;
+                tmpGridA[index] = this.gridA[i];
+                tmpGridB[index] = this.gridB[i];
+            }
+        }
+
+        this.gridA = tmpGridA;
+        this.gridB = tmpGridB;
         this.imageData = ctx.createImageData(canvas.width, canvas.height);
     }
 }
