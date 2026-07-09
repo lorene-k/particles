@@ -39,7 +39,9 @@ export class FreeParticles {
 
     reactToNeighbors(p, neighbors) {
         neighbors.forEach(n => {
-            const { distance, dx, dy } = getDistance(p.x, p.y, n.x, n.y);
+            const dx = n.x - p.x;
+            const dy = n.y - p.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance > 0 && distance < PARTICLE_MIN_DISTANCE) {
                 const force = (PARTICLE_MIN_DISTANCE - distance) / PARTICLE_MIN_DISTANCE;

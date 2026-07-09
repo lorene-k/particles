@@ -6,7 +6,9 @@ import {
     RD_RULES,
     RD_DB,
     RD_DA,
-    RD_WEIGHTS
+    RD_WEIGHTS,
+    RD_BRIGHTNESS_EXPONENT,
+    RD_BRIGHTNESS_TABLE_SIZE
 } from "../constants.js"
 
 export class ReactionDiffusion {
@@ -21,6 +23,8 @@ export class ReactionDiffusion {
         this.nextGridA = new Float32Array(this.width * this.height).fill(1);
         this.nextGridB = new Float32Array(this.width * this.height).fill(0);
 
+        this.brightnessLookupTable = this.buildBrightnessLookupTable();
+
         const centerX = Math.floor(this.width / 2);
         const centerY = Math.floor(this.height / 2);
 
@@ -32,6 +36,17 @@ export class ReactionDiffusion {
                 }
             }
         }
+    }
+
+    buildBrightnessLookupTable() {
+        const table = new Float32Array(RD_BRIGHTNESS_TABLE_SIZE);
+
+        for (let i = 0; i < RD_BRIGHTNESS_TABLE_SIZE; i++) {
+            const value = i / (RD_BRIGHTNESS_TABLE_SIZE - 1);
+            table[i] = Math.pow(value, RD_BRIGHTNESS_EXPONENT);
+        }
+
+        return table;
     }
 
     getLaplacian(i, grid) {
@@ -88,7 +103,8 @@ export class ReactionDiffusion {
         for (let i = 0; i < this.gridB.length; i++) {
             const px = RD_RESOLUTION * (i % this.width);
             const py = RD_RESOLUTION * Math.floor(i / this.width);
-            const brightness = Math.pow(this.gridB[i], 0.3);
+            const lookupIndex = Math.round(this.gridB[i] * (RD_BRIGHTNESS_TABLE_SIZE - 1));
+            const brightness = this.brightnessLookupTable[lookupIndex];
 
             for (let dy = 0; dy < RD_RESOLUTION; dy++) {
                 for (let dx = 0; dx < RD_RESOLUTION; dx++) {
@@ -104,7 +120,6 @@ export class ReactionDiffusion {
     }
 
     update(mouseMode) {
-        // this.handleMouse(mouseMode);
         for (let i = 0; i < this.gridA.length; i++) {
             const { newA, newB } = this.applyGrayScott(i);
             this.nextGridA[i] = newA;

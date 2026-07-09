@@ -94,7 +94,9 @@ export class Boids {
 
         neighbors.forEach(n => {
             if (n.type !== b.type) return;
-            const { distance, dx, dy } = getDistance(b.x, b.y, n.x, n.y);
+            const dx = n.x - b.x;
+            const dy = n.y - b.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance > BOIDS_PERCEPTION_RADIUS) return;
             if (distance < BOIDS_MIN_DISTANCE) {

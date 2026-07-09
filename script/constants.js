@@ -80,6 +80,9 @@ export const RD_WEIGHTS = {
     diagonal: 0.05,
 }
 
+export const RD_BRIGHTNESS_EXPONENT = 0.3;
+export const RD_BRIGHTNESS_TABLE_SIZE = 1024;
+
 export const RD_PRESETS = {
     stripes: { f: 0.040, k: 0.060 },
     coral: { f: 0.055, k: 0.062 },
