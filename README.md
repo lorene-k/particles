@@ -1,6 +1,7 @@
 # Particles
 
 A browser-based interactive particle simulation playground built with vanilla JavaScript and HTML5 Canvas.
+
 Switch between four simulation modes and tweak their parameters in real time through a side panel.
 
 → [Play with Particles](https://lorene-k.github.io/particles/)
